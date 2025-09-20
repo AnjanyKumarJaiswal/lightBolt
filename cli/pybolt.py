@@ -1,6 +1,6 @@
 import typer
 from pathlib import Path
-from cli.generator import generate_project
+from cli.generator import generate_project , run_server
 from rich.logging import RichHandler
 import logging
 
@@ -33,7 +33,8 @@ def create(
         raise typer.Exit(code=1)
 
     template_path = frameworks[framework.lower()]
-    generate_project(template_path, name, output_dir=output, skip_install=skip_install)
+    generated_project_dir = generate_project(template_path, name, output_dir=output, skip_install=skip_install)
+    run_server(generated_project_path=generated_project_dir)
 
 
 if __name__ == "__main__":
