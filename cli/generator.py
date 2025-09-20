@@ -7,10 +7,10 @@ from typing import Optional, Union
 from cookiecutter.main import cookiecutter
 from rich.logging import RichHandler
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
-from rich.traceback import install as enable_rich_traceback
+from rich.traceback import install 
 import logging
 
-enable_rich_traceback()
+install()
 logging.basicConfig(
     level="INFO",
     format="%(message)s",
@@ -28,7 +28,7 @@ def install_dependencies(project_path: Union[str, Path], python_executable: Opti
         logger.warning("No requirements.txt found — skipping dependency installation.")
         return True
 
-    python_executable = python_executable or sys.executable
+    python_executable = sys.executable
     logger.info(f"Installing dependencies with: {python_executable} -m pip install -r {req_file}")
 
     try:
@@ -43,7 +43,6 @@ def install_dependencies(project_path: Union[str, Path], python_executable: Opti
         logger.error(f"Dependency installation failed (exit code: {exc.returncode}).")
         logger.warning(f"Run manually: {python_executable} -m pip install -r {req_file}")
         return False
-
 
 def _find_created_project_dir(output_dir: Path, expected_name: str, start_time: float) -> Path | None:
     candidates = [p for p in output_dir.iterdir() if p.is_dir() and expected_name in p.name]
@@ -119,3 +118,50 @@ def generate_project(
     logger.info(f"Project ready: {created_dir}")
     logger.info(f"cd {created_dir.name}")
     return created_dir
+
+def run_server(
+    python_executable: Optional[str] = None,
+    generated_project_path: Union[str, Path] = None,
+):
+    if generated_project_path is None:
+        raise ValueError("generated_project_path must be provided.")
+    
+    python_executable = sys.executable
+    generated_project_path = Path(generated_project_path).resolve()
+    
+    manage_file = generated_project_path / "manage.py"
+    if manage_file.exists():
+        logger.info(f"Starting Django server with: {python_executable} manage.py runserver")
+        try:
+            subprocess.run(
+                [python_executable, "manage.py", "runserver"],
+                cwd=str(generated_project_path),
+                check=True
+            )
+            return True
+        except subprocess.CalledProcessError as exc:
+            logger.error(f"Django server process exited with code {exc.returncode}")
+            return False
+        except KeyboardInterrupt:
+            logger.info("Django server interrupted by user.")
+            return True 
+    
+    main_file = generated_project_path / "app" / "main.py"
+    if not main_file.exists():
+        logger.error(f"Neither manage.py nor app/main.py found in {generated_project_path}")
+        return False
+    
+    logger.info(f"Starting server with: {python_executable} {main_file}")
+    try:
+        subprocess.run(
+            [python_executable, str(main_file)],
+            cwd=str(generated_project_path),
+            check=True
+        )
+        return True
+    except subprocess.CalledProcessError as exc:
+        logger.error(f"Server process exited with code {exc.returncode}")
+        return False
+    except KeyboardInterrupt:
+        logger.info("Server interrupted by user.")
+        return True
