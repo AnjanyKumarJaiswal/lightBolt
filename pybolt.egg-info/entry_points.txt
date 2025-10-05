@@ -1,2 +1,0 @@
-[console_scripts]
-pybolt = cli.pybolt:app

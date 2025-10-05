@@ -15,11 +15,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
 ]
 
-ROOT_URLCONF = "test_django.urls"
+ROOT_URLCONF = "{{cookiecutter.project_name}}.urls"
 
 TEMPLATES = []
 
-WSGI_APPLICATION = "test_django.wsgi.application"
+WSGI_APPLICATION = "{{cookiecutter.project_name}}.wsgi.application"
 
 DATABASES = {
     "default": {
