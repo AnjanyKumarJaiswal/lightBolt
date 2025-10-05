@@ -1,3 +1,6 @@
 venv
 .env
 __pycache__
+.next 
+node_modules
+next-end.d.ts

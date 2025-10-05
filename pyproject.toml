@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pybolt"
-version = "0.1.0"
-description = "PyBolt - Scaffold Python backend projects instantly (FastAPI, Flask, Django)."
+name = "lightbolt"
+version = "0.1.1"
+description = "LightBolt - Generate Python based backend boilerplate instantly (FastAPI, Flask, Django)."
 authors = [
     { name = "Anjany", email = "anjany.jaiswal2005@gmail.com" }
 ]
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
     "typer>=0.9.0",
@@ -19,4 +19,10 @@ dependencies = [
 ]
 
 [project.scripts]
-pybolt = "cli.pybolt:app"
+lightbolt = "cli.lightbolt:app"
+
+[tool.setuptools]
+packages = ["cli"]
+
+[tool.setuptools.package-data]
+"cli" = ["templates/**/*"]
